@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fee Payment - Rudrapur Public School</title>
+  <meta name="description" content="Pay your school fees securely online via Razorpay" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #1e293b;
+    }
+
+    .container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 480px;
+      padding: 40px 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo p {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+      margin: 24px 0;
+    }
+
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .info-card h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .info-row+.info-row {
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .info-label {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .info-value {
+      color: #1e293b;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .amount-total {
+      background: linear-gradient(135deg, #eff6ff, #f3e8ff);
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .amount-total .label {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .amount-total .value {
+      font-size: 36px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-tuition {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+
+    .badge-transport {
+      background: #ecfdf5;
+      color: #10b981;
+    }
+
+    .badge-combined {
+      background: #f3e8ff;
+      color: #a855f7;
+    }
+
+    .btn-pay {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-pay:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-message {
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .status-message.success {
+      color: #34d399;
+    }
+
+    .status-message.error {
+      color: #f87171;
+    }
+
+    .status-message .icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .status-message h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .status-message p {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .receipt-btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      border-radius: 10px;
+      color: #34d399;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .receipt-btn:hover {
+      background: rgba(52, 211, 153, 0.25);
+    }
+
+    .remaining-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .remaining-info .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+
+    .remaining-info .row .label {
+      color: #64748b;
+    }
+
+    .remaining-info .row .val {
+      color: #d97706;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" id="app">
+    <div class="loading" id="loading-state">
+      <div class="spinner"></div>
+      <p style="color: #aaa;">Loading payment details...</p>
+    </div>
+  </div>
+
+  <script>
+    const app = document.getElementById('app');
+    const linkId = window.location.pathname.split('/pay/')[1];
+
+    if (!linkId) {
+      showError('Invalid payment link');
+    } else {
+      fetchPaymentDetails();
+    }
+
+    async function fetchPaymentDetails() {
+      try {
+        const res = await fetch(`/api/payment/link/${linkId}`);
+
+        if (!res.ok) {
+          const data = await res.json();
+          showError(data.message || 'Payment link is invalid or expired');
+          return;
+        }
+
+        const data = await res.json();
+        renderPaymentPage(data);
+      } catch (err) {
+        showError('Unable to load payment details. Please try again.');
+      }
+    }
+
+    function renderPaymentPage(data) {
+      const student = data.student;
+      const badgeClass = data.paymentType === 'tuition' ? 'badge-tuition' :
+        data.paymentType === 'transport' ? 'badge-transport' : 'badge-combined';
+
+      app.innerHTML = `
+        <div class="logo">
+          <img src="/rps_logo.png" alt="Rudrapur Public School Logo" style="height: 70px; margin-bottom: 12px; object-fit: contain;" onerror="this.style.display='none'" />
+          <h1>Rudrapur Public School</h1>
+          <p>Secure Fee Payment</p>
+        </div>
+        <div class="divider"></div>
+
+        <div class="info-card">
+          <h3>Student Information</h3>
+          <div class="info-row">
+            <span class="info-label">Name</span>
+            <span class="info-value">${student.studentName}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">UID</span>
+            <span class="info-value">${student.uid}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Class</span>
+            <span class="info-value">${student.className} - ${student.section}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Payment Type</span>
+            <span class="badge ${badgeClass}">${data.paymentType}</span>
+          </div>
+        </div>
+
+        ${data.tuitionAmount > 0 ? `
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">Tuition Fees</span>
+              <span class="info-value">₹${data.tuitionAmount.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        ` : ''}
+
+        ${data.transportAmount > 0 ? `
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">Transport Fees</span>
+              <span class="info-value">₹${data.transportAmount.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="amount-total">
+          <div class="label">Amount to Pay</div>
+          <div class="value">₹${data.totalAmount.toLocaleString('en-IN')}</div>
+        </div>
+
+        ${student.feesLeft ? `
+          <div class="remaining-info">
+            <div class="row">
+              <span class="label">Tuition Remaining</span>
+              <span class="val">₹${(student.feesLeft.tuitionLeft || 0).toLocaleString('en-IN')}</span>
+            </div>
+            <div class="row">
+              <span class="label">Transport Remaining</span>
+              <span class="val">₹${(student.feesLeft.transportLeft || 0).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 24px;">
+          <button class="btn-pay" id="pay-btn" onclick="initiatePayment()">
+            Pay ₹${data.totalAmount.toLocaleString('en-IN')}
+          </button>
+        </div>
+
+        <p style="text-align:center; color:#666; font-size:12px; margin-top:16px;">
+          Secured by Razorpay · 256-bit SSL Encryption
+        </p>
+      `;
+
+      // Store data for payment
+      window.paymentData = data;
+    }
+
+    function initiatePayment() {
+      const data = window.paymentData;
+      const btn = document.getElementById('pay-btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      const options = {
+        key: data.razorpayKeyId,
+        name: 'Rudrapur Public School',
+        description: `Fee Payment - ${data.paymentType.charAt(0).toUpperCase() + data.paymentType.slice(1)}`,
+        order_id: data.razorpayOrderId,
+        prefill: {
+          name: data.student.studentName,
+          email: 'testparent@rps.com',
+          contact: data.fatherWhatsapp || '9999999999'
+        },
+        theme: {
+          color: '#667eea',
+        },
+        handler: async function (response) {
+          btn.textContent = 'Verifying Payment...';
+          try {
+            const verifyRes = await fetch('/api/payment/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                paymentLinkId: linkId,
+              }),
+            });
+
+            const result = await verifyRes.json();
+
+            if (verifyRes.ok) {
+              showSuccess(result);
+            } else {
+              showError(result.message || 'Payment verification failed');
+            }
+          } catch (err) {
+            showError('Payment verification failed. Please contact the school.');
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            btn.disabled = false;
+            btn.textContent = `Pay ₹${data.totalAmount.toLocaleString('en-IN')}`;
+          },
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        showError('Payment failed: ' + response.error.description);
+      });
+      rzp.open();
+    }
+
+    function showSuccess(result) {
+      app.innerHTML = `
+        <div class="status-message success">
+          <div class="icon">✓</div>
+          <h2>Payment Successful!</h2>
+          <p>Your fee payment of <strong>₹${result.payment.amount.toLocaleString('en-IN')}</strong> has been received.</p>
+          <div style="margin-top: 20px; padding: 16px; background: rgba(52,211,153,0.1); border-radius: 12px; text-align: left;">
+            <div class="info-row">
+              <span class="info-label">Payment ID</span>
+              <span class="info-value" style="font-size: 12px;">${result.payment.paymentId}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Student</span>
+              <span class="info-value">${result.student.name}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">UID</span>
+              <span class="info-value">${result.student.uid}</span>
+            </div>
+          </div>
+          <p style="margin-top: 16px; color: #666; font-size: 13px;">
+            A receipt has been sent to the registered email address.
+          </p>
+          <div style="margin-top: 24px;">
+            <a href="/api/payment/receipt/${result.student._id}/${result.payment.paymentIndex}" class="receipt-btn" target="_blank">
+              Download Receipt
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function showError(message) {
+      app.innerHTML = `
+        <div class="status-message error">
+          <div class="icon">✕</div>
+          <h2>Oops!</h2>
+          <p>${message}</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+
+</html>

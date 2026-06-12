@@ -1,0 +1,28 @@
+{
+  "name": "rps-erp-backend",
+  "version": "1.0.0",
+  "description": "School ERP Fees Management System - Backend API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "multer": "^2.1.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.3",
+    "pdfkit": "^0.15.0",
+    "razorpay": "^2.9.5",
+    "xlsx": "^0.18.5"
+  }
+}
